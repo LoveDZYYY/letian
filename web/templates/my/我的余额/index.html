@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+
+
+{% load static %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block css %}
+<style>
+    .TopSDK {
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+        background-color: #25aef3;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<a class="layui-card-header" href="/my/index/">
+    <i class="layui-icon layui-icon-return"></i>
+    <span>返回</span>
+</a>
+
+<div class="layui-bg-gray" style="padding: 16px;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md6">
+            <div class="layui-card">
+
+                <div class="layui-card-body">
+                    <!-- 顶部广告牌 -->
+                    <div class="TopSDK">
+                        <i class="iconfont icon-anquanyinsi"></i>
+                        <span>资金安全有保障</span>
+                        <i class="layui-icon layui-icon-right"></i>
+                    </div>
+
+
+
+
+                    <!-- 余额显示 -->
+                    <div class="layui-panel" style="border-style: none;box-shadow: none; display: flex; justify-content: center;align-items: center;flex-direction: column;">
+                        <div style="padding: 32px;">
+                        
+                            <h4>
+                                <span>可用余额(元)</span>
+                                <i class="iconfont icon-yanjing"></i>
+                            </h4>
+                            <h1 style="text-align: center;font-size:40px; margin-top:20px;">{{user_data.money}}</h1>
+                        </div>
+                    </div>
+
+                    <div class="layui-panel"  style="border-style: none;box-shadow: none;">
+                        <div style="padding: 32px; display: flex; justify-content: space-around; align-items: center;">
+                            <button type="button" class="layui-btn layui-btn-primary " style="flex:1;">提现</button>
+
+                            <button type="button" class="layui-btn layui-bg-blue " style="flex:1;"style="flex:1;">充值</button>
+                        
+                        </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends 'layout.html' %}
+
+
+{% load static %}
+
+{% block title %}
+    我的
+{% endblock %}
+
+{% block css %}
+    <style>
+        .my_img_name_box {
+            box-shadow: 0px 0px 50px rgba(0, 0, 0, .3);
+        }
+
+        .my_img {
+            height: 270px;
+            text-align: center;
+            line-height: 270px;
+        }
+
+        .my_name {
+            height: 30px;
+            line-height: 30px;
+        }
+
+        .user_img {
+            height: 150px;
+            width: 150px;
+            border-radius: 10%;
+        }
+
+        .name {
+            text-align: center;
+        }
+
+        .sys_box {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            height: 300px;
+            margin-bottom: 50px;
+        }
+
+        .sys_item {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            border-radius: 10px;
+            align-items: center;
+            flex-direction: column;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, .3);
+        }
+
+        .sys_icon {
+            font-size: 32px;
+        }
+
+        .sys_test {
+            margin-top: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="layui-bg-gray" style="padding: 16px;">
+        <div class="layui-row layui-col-space15">
+
+            <div class="layui-card">
+                <div class="layui-card-body">
+
+                    <div class="my_img_name_box">
+                        <div class="my_name">
+                            <h3 class="name">{{request.session.info.user_name}}</h3>
+
+                        </div>
+                        <div class="my_img">
+                            <img src="{% static 'images/我的-头像.jpg' %}" class="user_img" alt="加载失败!">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <blockquote class="layui-elem-quote">
+                        系统选项
+                    </blockquote>
+                </div>
+                <div class="layui-card-body">
+                    <div class="sys_box">
+                        <!-- 最多9个 -->
+                        <a class="sys_item" href="/my/account/index/">
+                            <i class="iconfont icon-yue01 sys_icon"></i>
+                            <span class="sys_test">账号余额</span>
+                        </a>
+
+                        <a class="sys_item" href="/my/order/goods/index/">
+                            <!-- sessino/clear/ -->
+                            <i class="iconfont icon-wodedingdan sys_icon"></i>
+                            <span class="sys_test">我的订单</span>
+                        </a>
+
+                        <a class="sys_item" href="/sessino/clear/">
+                            <!-- sessino/clear/ -->
+                            <i class="iconfont icon-tuichu sys_icon"></i>
+                            <span class="sys_test">退出登录</span>
+                        </a>
+
+                    </div>
+                    <!-- <script>
+                        let sys_box = document.querySelector(".sys_box");
+                        let test = '';
+                        for (let i = 0; i < 9; i++) {
+                            let text = `
+                            <a class="sys_item" href="javascript:;">
+                                <i class="iconfont icon-tuichu sys_icon"></i>
+                                <span class="sys_test">敬请期待</span>
+                            </a>
+                            `;
+                            test = test + text;
+                        }
+                        sys_box.innerHTML = test;
+                    </script> -->
+                </div>
+            </div>
+
+
+            <!-- <blockquote class="layui-elem-quote">
+                敬请期待后续内容开放！
+            </blockquote> -->
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        var layer = layui.layer
+
+
+    </script>
+{% endblock %}

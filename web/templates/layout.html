@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'UI/layui-v2.9.6/layui/css/layui.css' %}">
+    <link rel="stylesheet" href="https://at.alicdn.com/t/c/font_4436054_socbdq9zp5s.css">
+    <title>
+        {% block title %}
+
+        {% endblock %}
+    </title>
+
+    {% block css %}
+
+    {% endblock %}
+
+
+
+    <style>
+        body {
+            position: relative;
+            background-color: #f3f2f7;
+        }
+
+        .botton_tagbar_box {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 999;
+        }
+
+        .botton_tagbar {
+            padding: 0 10px;
+            height: 50px;
+            /* flex 布局 */
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .tagbar_item {
+            width: 80px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #8b8b8b;
+        }
+
+        /* tagbar图标 */
+        .tagbar_icon {
+            font-size: 25px;
+        }
+
+        .accive {
+            color: red;
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+
+<div class="layui-panel botton_tagbar_box">
+    <div class="botton_tagbar">
+        <!-- tagbar item -->
+        <a class="tagbar_item {% if request.path == '/index/' %} accive {% endif %}" href="/index/">
+            <span class="tagbar_icon iconfont icon-shouye"></span>
+            <span>首页</span>
+        </a>
+
+        <a class="tagbar_item {% if request.path == '/casino/index/' %} accive {% endif %}" href="/casino/index/">
+            <span class="tagbar_icon iconfont icon-yunshichang"></span>
+            <span>赌场</span>
+        </a>
+
+        <a class="tagbar_item" href="javascript:;">
+            <span class="tagbar_icon iconfont icon-shangchang"></span>
+            <span>商场</span>
+        </a>
+
+        <a class="tagbar_item {% if request.path == '/my/index/' %} accive {% endif %}" href="/my/index/">
+            <span class="tagbar_icon iconfont icon-wode"></span>
+            <span>我的</span>
+        </a>
+
+    </div>
+    <!-- <script>
+        let botton_tagbar = document.querySelector(".botton_tagbar");
+
+        let test = '';
+
+        for (let i = 0; i < 4; i++) {
+            let element = `
+            <a class="tagbar_item" href="javascript:;">
+                <span class="tagbar_icon iconfont icon-shouye"></span>
+                <span>首页</span>
+            </a>
+            `;
+            test = test + element;
+        }
+
+        botton_tagbar.innerHTML = test;
+    </script> -->
+</div>
+
+
+
+
+{% block content %}
+
+{% endblock %}
+</body>
+<script src="{% static 'PublicJs/axios.js' %}"></script>
+<script src="{% static 'UI/layui-v2.9.6/layui/layui.js' %}"></script>
+{% block js %}
+
+{% endblock %}
+
+</html>

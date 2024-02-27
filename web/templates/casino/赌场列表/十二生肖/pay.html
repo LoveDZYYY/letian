@@ -1,0 +1,216 @@
+{% extends 'layout.html' %}
+
+
+{% load static %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block css %}
+<style>
+    .duju_box {
+        width: 30px;
+        height: 30px;
+        background-color: rgb(255, 234, 0);
+        margin: 0 auto;
+        color: white;
+        text-align: center;
+        line-height: 30px;
+        font-size: 18px;
+        border-radius: 50%;
+    }
+
+    .row_top {
+        height: 30px;
+        line-height: 30px;
+        /* background-color: plum; */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="layui-bg-gray" style="padding: 16px;margin-bottom: 100px;">
+
+
+    <blockquote class="layui-elem-quote">
+        <a href="javascript:;">
+            <i class="layui-icon layui-icon-return"></i>
+            返回
+        </a>
+    </blockquote>
+
+
+    <div class="layui-row layui-col-space15">
+
+        <div class="layui-card">
+            <div class="layui-card-header">{{request.session.info.user_name}}的订单</div>
+            <div class="layui-card-body">
+                <p class="layui-font-26 " style="margin-bottom: 20px;">你下注了：</p>
+
+
+                <!-- 用户的下注详情区 -->
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="150">
+                        <col width="150">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">生肖</th>
+                            <th>下注的金额</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- <tr>
+                            <td>
+                                <div class="duju_box">龙</div>
+                            </td>
+                            <td>$ <span>300</span> 元</td>
+                        </tr> -->
+
+                        {% for obj in user_shengxiao %}
+                        <tr>
+                            <td>
+                                <div class="duju_box">{{obj.duju}}</div>
+                            </td>
+                            <td>$ <span>{{obj.money}}</span> 元</td>
+                        </tr>
+
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+
+                <!-- 支付方式 -->
+                <div class="layui-card">
+                    <div class="layui-card-header">支付方式</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-size="sm">
+                            <colgroup>
+                                <col width="10">
+                                <col width="150">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <i class="iconfont icon-yue01"></i>
+                                    </td>
+                                    <td>账户支付</td>
+                                    <td><input type="radio" name="account" value="account" title="选中" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <i class="iconfont icon-weixinzhifu"></i>
+                                    </td>
+                                    <td>微信支付</td>
+                                    <td><input type="radio" name="account" value="wx" title="选中"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="layui-panel">
+                    <div style="padding: 12px;">
+                        <div class="layui-btn-container">
+                            <h3>
+                                共支付：<span style="color: red;">$ {{pay_money}} 元</span>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="layui-btn layui-btn-normal layui-btn-fluid" id="pay">立即支付</button>
+
+                <!-- 支付操作 -->
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    let layer = layui.layer;
+    // account支付
+    function acccount() {
+        console.log("调用了账户支付");
+        // 获取用户账号余额的金钱
+        user_money = "{{request.session.user_money}}"
+
+        AccountMoney = "{{pay_money}}"
+
+
+        // 逻辑代码
+        code = null
+
+        // 判断用户的钱能不能足够支付
+        if (Number(AccountMoney) > Number(user_money)) {
+            // 用户的钱不足支付本次订单
+            layer.msg("余额不足，请先充值！", { icon: 5 })
+            code = 0
+            return
+        } else {
+            code = 1
+        }
+
+        // 如果代码执行到这里则说明用户的余额足够支持本次支付
+
+        // 向服务器说明同意交易，在下面的AJAX代码中，0是不同意(false)，1是同意(true)
+        axios({
+            url: "/pay/",
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{csrf_token}}",
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            data: {
+                "code": code,
+                "AccountMoney": AccountMoney
+            }
+        }).then(res => {
+            console.log(res);
+            layer.msg(res.data.text)
+            setTimeout(() => {
+                window.location.href = res.data.url;
+            }, 1000)
+        }).catch(error => {
+            console.log(error);
+            layer.msg(error.response.data)
+        })
+
+        return
+
+    }
+    function wx() {
+        console.log("调用了微信支付");
+        layer.msg("微信支付暂不可用，请选择其它支付方式！")
+        return
+    }
+    document.querySelector("#pay").addEventListener('click', () => {
+        // 判断当前选中的支付方式
+        let radio = document.querySelectorAll("[type=radio]");
+        for (let i = 0; i < radio.length; i++) {
+            // 循环支付方式，判断谁选中，然后调用对应的函数
+            if (radio[i].checked) {
+                // 获取value
+                value = radio[i].value;
+                if (value == 'account') {
+                    acccount();
+                    break;
+                }
+                if (value == 'wx') {
+                    wx();
+                    break;
+                }
+            }
+        }
+
+
+
+    })
+</script>
+{% endblock %}

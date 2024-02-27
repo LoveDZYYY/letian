@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+
+{% load static %}
+
+{% block title %}
+    首页
+{% endblock %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}
+
+{% block js %}
+<script>
+    let layer = layui.layer;
+
+    let test = '<h3>系统返回页面失败，可能是UI设计师尚未开发此页面，请敬请期待！</h3>';
+
+    layer.open({
+        type:1,
+        title:"<h5>访问服务器异常</h5>",
+        content:test,
+        anim:1,
+        btn:['确定'],
+        btn1: function(index, layero, that){
+            // 点击确定关闭弹窗
+            layer.close(index);
+        },
+        btnAlign:'c',
+        end:() => {
+            console.log("我被关闭了");
+        }
+    });
+</script>
+{% endblock %}

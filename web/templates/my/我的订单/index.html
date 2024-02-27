@@ -1,0 +1,270 @@
+{% extends 'layout.html' %}
+
+
+{% load static %}
+
+{% block title %}
+
+{% endblock %}
+
+
+
+{% block css %}
+<style>
+    .NumberIcon {
+        float: left;
+        width: 100px;
+        height: 100%;
+    }
+
+    .PayResUlt {
+        float: right;
+        width: 100px;
+        height: 100%;
+        text-align: center;
+    }
+
+    .duju_box {
+        width: 30px;
+        height: 30px;
+
+        margin: 0 auto;
+        color: white;
+        text-align: center;
+        line-height: 30px;
+        font-size: 18px;
+        border-radius: 50%;
+    }
+
+
+    /* 购买的生肖数量与购买的金额 */
+    .BuyNumberAndPayMoney {
+        height: 30px;
+        /* background-color: purple; */
+    }
+
+    .BuyNumber,
+    .PayMoney {
+        height: 100%;
+        line-height: 30px;
+        /* background-color: slateblue; */
+    }
+
+    .BuyNumber {
+        float: left;
+    }
+
+    .PayMoney {
+        float: right;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="layui-bg-gray" style="padding: 16px; margin-bottom: 100px;">
+    <div class="layui-row layui-col-space15">
+
+        {% if yy == 0 %}
+
+        <h2>当前无订单,请去赌场漏两手吧！</h2>
+        {% elif yy == 1 %}
+        <h2>赌场未开放</h2>
+        {% elif yy == 2 or yy == 3 %}
+        {% if yy == 2 %}
+        <h2>未到开奖时间，下面是你往期的开奖记录</h2>
+        {% endif %}
+        {% for obj in USERBETDATA %}
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <!-- 期数与图标 -->
+                    <div class="NumberIcon">
+                        <i class="iconfont icon-longlong"></i>
+                        <span>第{{obj.current_phase}}期</span>
+                    </div>
+                    <!-- 支付结果 -->
+                    <div class="PayResUlt">
+
+
+                        {% if obj.is_pay %}
+                        <i class="iconfont icon-yizhifugai" style="color: #7c98c5;"></i>
+                        <span style="color: #7c98c5;">已支付</span>
+                        {% else %}
+                        <i class="iconfont icon-weizhifu" style="color: red"></i>
+                        <span style="color: #7c98c5;">未支付</span>
+                        {% endif %}
+
+
+                    </div>
+                </div>
+                <div class="layui-card-body">
+                    <!-- 折叠面板：用来储存用户购买的生肖数据 -->
+                    <div class="layui-collapse">
+
+                        <div class="layui-colla-item">
+                            <div class="layui-colla-title">我的下注信息</div>
+                            <div class="layui-colla-content">
+                                <blockquote class="layui-elem-quote">
+                                    我的赌注及金额
+                                </blockquote>
+                                <table class="layui-table">
+                                    <colgroup>
+                                        <col width="150">
+                                        <col width="150">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: center;">生肖</th>
+                                            <th>下注的金额</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        {% for i in obj.user_bet_shengxiao %}
+                                        <tr>
+                                            <td>
+                                                <div class="duju_box" style="background-color: rgb(210, 224, 53);">
+                                                    {{i.duju}}</div>
+                                            </td>
+                                            <td>$ <span>{{i.money}}</span> 元</td>
+                                        </tr>
+                                        {% endfor %}
+
+                                    </tbody>
+                                </table>
+                                {% if obj.is_res_order == 0 %}
+                                <blockquote class="layui-elem-quote layui-quote-nm">
+                                    本期开奖生肖
+                                </blockquote>
+
+                                <table class="layui-table">
+                                    <colgroup>
+                                        <col width="150">
+                                        <col width="150">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: center;">开奖生肖</th>
+                                            <th>你赢了</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+
+
+                                        {{obj.OPENHTML}}
+
+                                    </tbody>
+                                </table>
+
+
+                                <div class="layui-panel">
+                                    <div style="padding: 12px;">
+
+
+
+                                        <h3 style="text-align: center;">本次共赢了：<span
+                                                style="color: red;">{{obj.good_money}}</span> 元!</h3>
+                                        
+
+                                        {% if obj.is_pay == False %}
+                                    
+                                        {% if obj.current_phase == obj.open_current_phase %}
+                                        <p style="color: red;">由于你在本期中没有完成下注，本次资金无法汇入你的账号</p>
+                                        {% else %}
+                                        <p style="color: red;">你在本期中没有完成付款</p>
+                                        {% endif %}
+    
+                                        {% else %}
+                                        {% if obj.good_money > 0 %}
+                                        <span>资金已打往你的账户，祝你天天发财！</span>
+                                        {% else %}
+                                        <span>本次失利了，下把一定赢！</span>
+                                        {% endif %}
+                                        <i class="iconfont icon-yizhifugai" style="color: #7c98c5;"></i>
+    
+                                        {% endif %}
+
+
+
+                            
+
+
+
+
+
+
+
+
+
+                                    </div>
+                                </div>
+                                {% else %}
+                                <h3>
+                                    <span style="color: red;">当前未到开奖的时间，本期开奖时间为：{{obj.open_time}}</span>
+                                    {% if obj.is_pay == False %}
+                                    <!-- <i class="iconfont icon-yizhifugai" style="color: #7c98c5;"></i> -->
+                                    <!-- 如果开奖了用户还是没有支付 -->
+                                    {% if obj.current_phase == obj.open_current_phase %}
+                                    <p style="color: red;">你当前未付款,请先前往付款吧~</p>
+                                    <button type="button" class="layui-btn layui-bg-blue"
+                                        onclick="window.location.href='/pay/'" style="margin:10px 0;">立即支付</button>
+                                    {% else %}
+                                    <p style="color: red;">你在本期中没有完成付款</p>
+                                    {% endif %}
+                                    {% endif %}
+                                </h3>
+                                {% endif %}
+
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <p class="layui-font-14" style="margin:10px 0;">
+                        <span>下注时间：</span>
+                        <span>{{obj.user_bet_time |date:"Y-m-d"}}</span>
+                    </p>
+
+                    <p class="layui-font-14" style="margin:10px 0;">
+                        <span>开奖时间：</span>
+                        <span>{{obj.open_time | date:"Y-m-d"}}</span>
+                    </p>
+
+                    <p class="layui-font-14" style="margin:10px 0;">
+                        <span>下注管理员电话：</span>
+                        <span>19924454082</span>
+                        <!-- 19924454082@aliyun.com -->
+                    </p>
+
+
+                    <!-- 购买数量、支付的金额 -->
+                    <div class="BuyNumberAndPayMoney">
+                        <div class="BuyNumber">
+                            <span>生肖购买数量：</span>
+                            <span style="color: red;"> {{obj.user_bet_shengxiao_length}} </span>
+                            个
+                        </div>
+                        <div class="PayMoney">
+                            <span>支付金额：</span>
+                            <span style="color:red;">{{obj.user_bet_money}} </span>元
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+
+
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

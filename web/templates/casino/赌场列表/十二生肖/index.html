@@ -1,0 +1,240 @@
+{% extends 'layout.html' %}
+
+
+{% load static %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block css %}
+<style>
+    .duju_box {
+        width: 50px;
+        height: 50px;
+        background-color: rgb(255, 234, 0);
+        margin: 0 auto;
+        color: white;
+        text-align: center;
+        line-height: 50px;
+        font-size: 22px;
+        border-radius: 50%;
+    }
+
+    .function_box {
+        height: 50px;
+    }
+
+    .function_row {
+        height: 100%;
+        background-color: whitesmoke;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+    }
+
+    .pay_money {
+        color: red;
+        font-size: 18px;
+    }
+
+    .row_top {
+        height: 30px;
+        line-height: 30px;
+        /* background-color: plum; */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 50px; background-color: #f3f2f7; padding: 20px;">
+    <div class="row_top">
+        <a href="/casino/index/">
+            <i class="layui-icon layui-icon-return"></i>
+            返回
+        </a>
+    </div>
+    <table class="layui-table" lay-size="sm">
+        <colgroup>
+            <col>
+            <col width="100">
+            <col>
+        </colgroup>
+
+        <tbody id="tbody">
+            <!-- <tr>
+            <td>
+                <input type="checkbox" name="AAA" title="待后端数据传送">
+            </td>
+            <td>
+                <div class="duju_box">龙</div>
+            </td>
+            <td>
+                <input type="text" name="" placeholder="文本框" class="layui-input">
+            </td>
+        </tr> -->
+
+
+        </tbody>
+    </table>
+
+    <!-- 底部功能区 -->
+    <div class="function_box">
+        <div class="function_row">
+            <button type="button" class="layui-btn layui-bg-blue" id="GoPay">去支付</button>
+            <h4>需支付：<span class="pay_money"></span> 元</h4>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    let layer = layui.layer;
+    const shiershengxiao_data = [
+        '鼠',
+        '牛',
+        '虎',
+        '兔',
+        '龙',
+        '蛇',
+        '马',
+        '羊',
+        '猴',
+        '鸡',
+        '狗',
+        '猪',
+    ]
+
+    let new_html_data = shiershengxiao_data.map((res) => {
+        return `
+            <tr>
+                <td>
+                    <input type="checkbox" name="AAA" title="待后端数据传送">
+                </td>
+                <td>
+                    <div class="duju_box">${res}</div>
+                </td>
+                <td>
+                    <input type="text" name="" placeholder="请输入 ${res} 的下注的金额" class="layui-input">
+                </td>
+            </tr>
+
+        `;
+    }).join('');
+
+    let tbody = document.querySelector("#tbody");
+
+    tbody.innerHTML = new_html_data;
+
+
+    document.querySelector("#GoPay").addEventListener('click', () => {
+        // 去支付
+        /***
+         * 1.用户选择的数量不能超过 5 个，不能低于 1 个
+         * 2.每个赌具必须填写金额，最少 1 元，最多 100 元
+         */
+
+
+        // 获取 全部 选择框
+        let CheckboxList = document.querySelectorAll("[type=checkbox]");
+
+        // 判断选择框的数量有没有符合 要求 
+        // 定义一个 列表 存储选中的 赌具
+        let duju_list = [];
+
+        // 定义一个总金额
+        let MoneyCount = 0;
+
+        // 定义列表储存字典，字典中包含用户购买的赌具和金额
+        duju_info_list = []
+
+        // 循环 全部 赌具， 获取选中的赌具并加入 选中的赌具列表
+        for (let i = 0; i < CheckboxList.length; i++) {
+            if (CheckboxList[i].checked) {
+                // 判断选中的赌具中金额有没有符合要求
+                let money = Number(CheckboxList[i].parentNode.parentNode.querySelector("[type=text]").value);
+
+
+                let duju = CheckboxList[i].parentNode.parentNode.querySelector(".duju_box").textContent;
+                // 如果 money 返回了 NaN 说明有错误值，需要停止执行病提醒用户
+                if (isNaN(money)) {
+                    layer.msg(`<span> [${duju}] 的赌注出现了错误信息，请检查你的赌注是否输入正确 </span>`)
+                    return
+                }
+                if (money > 100 || money < 1) {
+                    layer.msg(`<span style="color:red;">${duju}</span> 金额要求：最少 1 元，最多 100 元`);
+                    return
+                } else {
+                    duju_list.push(duju);
+
+                    // 将总金额的钱进行相加
+                    MoneyCount += money;
+
+                    // 制作字典添加进列表
+                    duju_info_list.push({
+                        "duju": duju,
+                        "money": money
+                    })
+                }
+
+            }
+        }
+
+        // 判断选中的赌具有没有符合数量要求
+        if (duju_list.length > 5 || duju_list.length < 1) {
+            layer.msg("赌具的数量不能超过 5 个，不能低于 1 个", { icon: 0 })
+            return
+        }
+
+        // 渲染总金额
+        let pay_money = document.querySelector(".pay_money");
+
+        pay_money.innerHTML = MoneyCount;
+
+
+        layer.confirm(`你选择了：[${duju_list}] ，共需要支付： <span style="color:red;">${MoneyCount}</span> 元，请确定：`, {
+            icon: 3,
+            title: '提示'
+        }, function (index) {
+            // 制作上传的字典数据
+            upload_data = {
+                "user_buy_goods": JSON.stringify(duju_info_list),
+                "stay_pay_money": MoneyCount
+            }
+            axios({
+                url: "/casino/shiershengxiao/index/",
+                method: "post",
+                headers: {
+                    "X-CSRFToken": "{{csrf_token}}",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                data: upload_data
+            }).then(response => {
+                console.log("服务器返回了：", response);
+                layer.msg(response.data.resuil);
+                setTimeout(() => {
+                    window.location.href = response.data.url;
+                }, 1000)
+            }).catch(error => {
+                console.log("数据错误Error");
+                layer.msg(`<span class="layui-icon layui-icon-error" style="color:red;"></span> ${error.response.data}`)
+            })
+
+
+
+            layer.close(index);
+        }, (index) => {
+            // console.log("我被关闭了");
+            layer.msg("已取消")
+            layer.close(index);
+        });
+
+
+        console.log("数据校验超过");
+
+
+    })
+</script>
+{% endblock %}

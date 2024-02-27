@@ -1,0 +1,77 @@
+{% extends 'layout.html' %}
+
+
+{% load static %}
+
+{% block title %}
+    赌场列表
+{% endblock %}
+
+{% block css %}
+    <style>
+        .casino_item {
+            height: 300px;
+            border-bottom: 1px solid palevioletred;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .casino_item:last-of-type {
+            border-bottom: none;
+        }
+
+        .casino_img_box {
+            height: 270px;
+        }
+
+        .casino_img {
+            height: 100%;
+            width: 100%;
+            border-radius: 10%;
+        }
+
+        .casino_test_box {
+            height: 30px;
+            line-height: 30px;
+        }
+
+        /* 赌场名字 */
+        .casino_test {
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <blockquote class="layui-elem-quote">
+        乐天赌场温馨提示您：祝你新年大吉，逢赌必胜！
+    </blockquote>
+
+    <div class="layui-bg-gray" style="padding: 16px;">
+        <div class="layui-row layui-col-space15">
+
+            <div class="layui-card">
+
+                <div class="layui-card-body">
+                    <!-- <img src="{% static 'images/12生肖图.jpg' %}" alt=""> -->
+
+                    <a class="casino_item" href="/casino/shiershengxiao/index/">
+                        <div class="casino_img_box">
+                            <img src="{% static 'images/12生肖图.jpg' %}" class="casino_img" alt="">
+                        </div>
+                        <div class="casino_test_box">
+                            <h4 class="casino_test">12生肖模式</h4>
+                        </div>
+                    </a>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}
